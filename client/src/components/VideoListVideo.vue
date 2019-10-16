@@ -1,29 +1,44 @@
 <template>
-    <router-link :to="{ name: 'video-watch', params: { id: video.id }}">
-        <div class="video-box">
+    
+    <v-card width="340px" 
+          hover 
+          class="ma-2"
+          :to="{ name: 'video-watch', params: { id: video.id }}">
+        <v-img :src="video.thumbnail" />
+        <v-card-title>{{ video.name }}</v-card-title>
+        <v-card-text>
+            <div class="green--text" v-if="isPlayed">
+                <font-awesome-icon icon="check" /> Played
+            </div>
+        </v-card-text>
 
-        <img :src="video.thumbnail" />
-        <div>
-            <h3>{{ video.name }}</h3>
-            <div v-html="video.description"></div>
-            
-            <span v-for="tag_id in video.tags" :key="tag_id.id">
-                <router-link :to="{ name: 'tag', params: {id: tag_id.id}}">
-                    <v-btn>{{tag_id.name}}</v-btn>
-                </router-link>
-            </span>
-            
-        </div>
-        </div>
-    </router-link>
+        <v-card-actions>
+        <span v-for="tag_id in video.tags" :key="`${video.id}-${tag_id}`">
+            <v-btn color="green lighten-2" 
+                class="mr-2"
+                small
+                @mousedown.stop
+                :to="{ name: 'tag', params: {id: tag_id.id}}">
+                {{tag_id.name}}
+            </v-btn>
+        </span>
+        </v-card-actions>
+    </v-card>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     computed: {
+        ...mapState(['playedVideos', 'tags']),
+
         tag () {
-            return this.$store.state.tags.find(tag => tag.id == this.$route.params.id) || {}
+            return this.tags.find(tag => tag.id == this.$route.params.id) || {}
         },
+
+        isPlayed(){
+            return this.playedVideos.includes(this.video.id)
+        }
     },
 
     props: ['video']

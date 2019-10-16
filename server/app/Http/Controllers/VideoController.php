@@ -47,7 +47,22 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $video = new Video($request->all());
+
+        $this->validate($request, [
+    		'name' => 'required|max:255',
+    		'description' => 'required|max:3000',
+            'thumbnail' => 'required',
+            'videoUrl' => 'required'
+        ]);
+
+        $video->save();
+
+        return response()
+            ->json([
+                'video' => $video
+            ]);
+        
     }
 
     /**
@@ -86,7 +101,33 @@ class VideoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        // return response()
+        //     ->json([
+        //         $request->name
+        //     ]);
+
+        $video = Video::findorFail($id);
+
+        $this->validate($request, [
+    		'name' => 'required|max:255',
+    		'description' => 'required|max:3000',
+            'thumbnail' => 'required',
+            'videoUrl' => 'required'
+        ]);
+
+        $video->name = $request->name;
+        $video->description = $request->description;
+        $video->thumbnail = $request->thumbnail;
+        $video->videoUrl = $request->videoUrl;
+
+        $video->save();
+
+        return response()
+            ->json([
+                'video' => $video
+            ]);
+        
     }
 
     /**
@@ -97,6 +138,7 @@ class VideoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $video = Video::findorFail($id);
+        $video->delete();
     }
 }

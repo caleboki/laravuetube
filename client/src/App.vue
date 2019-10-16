@@ -1,10 +1,12 @@
 <template>
   <v-app>
-    <v-app-bar app>
+    <v-app-bar app color="green">
       <v-toolbar-title class="headline text-uppercase">
-        <span>VueTube</span>
+        <v-btn text to="/">VueTube</v-btn>
         
       </v-toolbar-title>
+      <v-btn text to="/admin/videos">Admin</v-btn>
+      <v-btn text to="/video/new">Add Video</v-btn>
       <v-spacer></v-spacer>
       <v-btn
         text

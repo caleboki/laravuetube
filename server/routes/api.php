@@ -19,3 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('videos', 'VideoController@index');
 Route::get('videos/{id}', 'VideoController@show');
+
+Route::post('videos', 'VideoController@store');
+Route::delete('videos/{id}', 'VideoController@destroy');
+
+Route::put('videos/{id}', 'VideoController@update');
