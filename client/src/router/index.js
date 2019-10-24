@@ -6,6 +6,9 @@ import TagVideoList from '../views/TagVideoList'
 import VideoCreate from "../views/VideoCreate.vue";
 import AdminVideoList from "../views/AdminVideoList.vue";
 import AdminVideoEdit from "../views/AdminVideoEdit.vue";
+import AdminUserList from "../views/AdminUserList.vue";
+import UserLogin from "../views/UserLogin.vue";
+import UserRegistration from "../views/UserRegistration.vue";
 
 Vue.use(VueRouter)
 
@@ -14,6 +17,16 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/login',
+    name: 'user-login',
+    component: UserLogin
+  },
+  {
+    path: '/registration',
+    name: 'user-registration',
+    component: UserRegistration
   },
   {
     path: '/about',
@@ -33,6 +46,11 @@ const routes = [
     name: "admin-video-edit",
     component: AdminVideoEdit,
     params: true
+  },
+  {
+    path: "/admin/users",
+    name: "admin-users-list",
+    component: AdminUserList
   },
   {
     path: "/video/new",

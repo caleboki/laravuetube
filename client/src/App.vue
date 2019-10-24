@@ -8,11 +8,14 @@
       <v-btn text to="/admin/videos">Admin</v-btn>
       <v-btn text to="/video/new">Add Video</v-btn>
       <v-spacer></v-spacer>
-      <v-btn
-        text
-      >
-        <span class="mr-2">Login</span>
-      </v-btn>
+      <div v-if="currentUser.name">
+        {{ currentUser.name }}
+        <v-btn text class="mr-2" @click="logoutUser">Logout</v-btn>
+      </div>
+      <div v-else>
+        <v-btn text class="mr-2" to="/login">Login</v-btn>
+        <v-btn text class="mr-2" to="/registration">Register</v-btn>
+      </div>
     </v-app-bar>
 
     <v-content>
@@ -22,19 +25,33 @@
 </template>
 
 <script>
-
+import { mapState } from 'vuex';
 
 export default {
   name: 'App',
   components: {
     
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
 
   mounted(){
+    this.$store.dispatch('getAuthenticatedUser');
     this.$store.dispatch('loadVideos');
   },
   data: () => ({
     //
   }),
+
+  methods: {
+    logoutUser() {
+      this.$store.dispatch("logoutUser");
+    },
+    loginUser({commit}, user) {
+      commit('SET_CURRENT_USER', user);
+    }
+  },
+
 };
 </script>

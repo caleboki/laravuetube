@@ -24,3 +24,8 @@ Route::post('videos', 'VideoController@store');
 Route::delete('videos/{id}', 'VideoController@destroy');
 
 Route::put('videos/{id}', 'VideoController@update');
+
+Route::get('users', 'UserController@index');
+Route::post('users', 'UserController@store');
+
+Route::post('sessions', 'CustomAuthController@login');

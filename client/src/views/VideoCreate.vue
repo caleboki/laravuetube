@@ -3,15 +3,7 @@
       <v-row>
           <v-col md="3" cols="12">
               <h1>Video Create Page</h1>
-              <v-text-field v-model="video.name" :rules="[rules.required, rules.counter]" label="Name" />
-              <v-textarea v-model="video.description" :rules="[rules.required, rules.counter]" label="Description" />
-              <v-text-field v-model="video.thumbnail" :rules="[rules.required]" label="Thumbnail URL" />
-              <v-text-field v-model="video.videoUrl"
-                      :rules="[rules.required]"
-                      label="Video URL" 
-                      hint="If you want our friends in China to be able to watch this, please use Amazon S3 or similar instead of Youtube and Vimeo." />
-
-              <v-btn @click="createVideo">Create Video</v-btn>
+              <VideoEditForm :video="video" :saveVideo="createVideo" buttonText="Create Video"/>
           </v-col>
           <v-col md="9" cols="12">
               <VideoListVideo :video="video" />
@@ -23,21 +15,28 @@
 
 <script>
 import VideoListVideo from '@/components/VideoListVideo';
+import VideoEditForm from '@/components/VideoEditForm.vue';
 
 export default {
     data() {
       return {
         video: {},
 
-        rules: {
-          required: value => !!value || 'Required.',
-          counter: value => value.length <= 20 || 'Max 20 characters',
+        required(propertyType) { 
+          return v => v && v.length > 0 || `You must input a ${propertyType}`
         },
+        minLength(propertyType, minLength) {
+          return v => v && v.length >= minLength || `${propertyType} must be at least ${minLength} characters`
+        },
+        maxLength(propertyType, maxLength) {
+          return v => v && v.length <= maxLength || `${propertyType} must be less than ${maxLength} characters`
+        }
     
       }
     },
     components: {
       VideoListVideo,
+      VideoEditForm
     },
     methods: {
       async createVideo() {

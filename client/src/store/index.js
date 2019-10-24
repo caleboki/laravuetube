@@ -9,6 +9,8 @@ export default new Vuex.Store({
     videos: [],
     tags: [],
     playedVideos: [],
+    users: [],
+    currentUser: {}
   },
 
   mutations: {
@@ -21,10 +23,21 @@ export default new Vuex.Store({
     SET_PLAYED_VIDEOS(state, playedVideos) {
       state.playedVideos = playedVideos;
     },
+    SET_USERS(state, users) {
+      state.users = users;
+    },
     MARK_VIDEO_PLAYED(state, videoId) {
       let playedVideos = state.playedVideos.concat(videoId);
       state.playedVideos = playedVideos;
       window.localStorage.playedVideos = JSON.stringify(playedVideos);
+    },
+    LOGOUT_USER(state) {
+      state.currentUser = {}
+      window.localStorage.currentUser = JSON.stringify({});
+    },
+    SET_CURRENT_USER(state, user) {
+      state.currentUser = user;
+      window.localStorage.currentUser = JSON.stringify(user);
     },
     ADD_VIDEO(state, video) {
       let videos = state.videos.concat(video);
@@ -63,8 +76,19 @@ export default new Vuex.Store({
       commit('SET_VIDEOS', videos.map(v => v)); 
       commit('SET_TAGS', tags);
 
-      let playedVideos = JSON.parse(window.localStorage.playedVideos);
-      commit('SET_PLAYED_VIDEOS', playedVideos);
+      if (localStorage.getItem("playedVideos") !== null) {
+        let playedVideos = JSON.parse(window.localStorage.playedVideos);
+        commit('SET_PLAYED_VIDEOS', playedVideos);
+      }
+      
+    },
+
+    getAuthenticatedUser({commit}){
+      if (localStorage.getItem("currentUser") !== null) {
+        let user = JSON.parse(window.localStorage.currentUser);
+        commit('SET_CURRENT_USER', user);
+      }
+      
     },
 
     markPlayed({commit}, videoId) {
@@ -93,6 +117,44 @@ export default new Vuex.Store({
         commit('DELETE_VIDEO', video.id);
       }
     },
+
+    async loadUsers({commit}) {
+      let response = await Api().get('/users');
+      let users = response.data.users;
+      commit('SET_USERS', users.map(u => u));
+    },
+
+    async loginUser({commit}, loginInfo) {
+      try {
+        let response = await Api().post('/sessions', loginInfo);
+        let user = response.data.user;
+
+        commit('SET_CURRENT_USER', user);
+        return user;
+      } catch {
+          return {error: "Email/password combination was incorrect.  Please try again."}
+      }
+
+    },
+
+    async registerUser({commit}, registrationInfo) {
+      try {
+        let response = await Api().post('/users', registrationInfo);
+        let user = response.data.user;
+
+        commit('SET_CURRENT_USER', user);
+        return user;
+      } catch(error) {
+        console.log(error.response)
+        return {error: error.response.data.errors.email}
+      }
+    },
+
+    logoutUser({commit}) {
+      commit('LOGOUT_USER');
+    },
+
+    
   },
   modules: {
   }

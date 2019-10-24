@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Video;
-use App\Tag;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
-class VideoController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,13 +15,11 @@ class VideoController extends Controller
      */
     public function index()
     {
-        $videos = Video::with('tags')->get();
-        $tags = Tag::with('videos')->get();
+        $users = User::all();
         
         return response()
     		->json([
-                'videos' => $videos,
-                'tags' => $tags
+                'users' => $users
     		]);
     }
 
@@ -43,22 +41,24 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate($request, [
-    		'name' => 'required|max:255',
-    		'description' => 'required|max:3000',
-            'thumbnail' => 'required',
-            'videoUrl' => 'required'
+            'name' => 'required|max:255',
+    		'email' => 'required|email|unique:users',
+            'password' => 'required|min:8'
         ]);
 
-        $video = new Video($request->all());
+        $user = new User($request->all());
 
-        $video->save();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        
+        $user->save();
+        Auth::login($user);
+            
+        return response()->json(['user' => Auth::user()]);
+    
 
-        return response()
-            ->json([
-                'video' => $video
-            ]);
         
     }
 
@@ -70,12 +70,7 @@ class VideoController extends Controller
      */
     public function show($id)
     {
-        $video = Video::findOrFail($id);
-        return response()
-    		->json([
-                'video' => $video,
-                'tags' => $video->tags
-    		]);
+        
     }
 
     /**
@@ -98,33 +93,7 @@ class VideoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        // return response()
-        //     ->json([
-        //         $request->name
-        //     ]);
-
-        $this->validate($request, [
-    		'name' => 'required|max:50',
-    		'description' => 'required',
-            'thumbnail' => 'required',
-            'videoUrl' => 'required'
-        ]);
-
-        $video = Video::findorFail($id);
-
-        $video->name = $request->name;
-        $video->description = $request->description;
-        $video->thumbnail = $request->thumbnail;
-        $video->videoUrl = $request->videoUrl;
-
-        $video->save();
-
-        return response()
-            ->json([
-                'video' => $video
-            ]);
-        
+        //
     }
 
     /**
@@ -135,7 +104,6 @@ class VideoController extends Controller
      */
     public function destroy($id)
     {
-        $video = Video::findorFail($id);
-        $video->delete();
+        //
     }
 }

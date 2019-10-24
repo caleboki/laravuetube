@@ -1,27 +1,37 @@
 <template>
-<v-container>
-    <v-text-field v-model="video.name" label="Name" />
-    <v-textarea v-model="video.description" label="Description" />
-    <v-text-field v-model="video.thumbnail" label="Thumbnail URL" />
-    <v-text-field v-model="video.videoUrl" 
-                  label="Video URL" 
-                  hint="If you want our friends in China to be able to watch this, please use Amazon S3 or similar instead of Youtube and Vimeo." />
 
-    <v-btn @click="saveVideo">Save Video</v-btn>
+<v-container>
+  <VideoEditForm :video="video" :saveVideo="saveVideo" buttonText="Save Video"/>
+    
 </v-container>
     
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import VideoEditForm from '@/components/VideoEditForm.vue'
 
 export default {
+    components: {
+      VideoEditForm
+    },
     computed: {
       ...mapState(['videos']),
       video(){
         return this.videos.find(v => v.id == this.$route.params.id);
-      }
-    },
+      },
+
+      required(propertyType) { 
+          return v => v && v.length > 0 || `You must input a ${propertyType}`
+        },
+        minLength(propertyType, minLength) {
+          return v => v && v.length >= minLength || `${propertyType} must be at least ${minLength} characters`
+        },
+        maxLength(propertyType, maxLength) {
+          return v => v && v.length <= maxLength || `${propertyType} must be less than ${maxLength} characters`
+        }
+      },
+
     methods: {
       async saveVideo() {
         await this.$store.dispatch('editVideo', this.video);
