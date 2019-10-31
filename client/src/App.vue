@@ -5,8 +5,8 @@
         <v-btn text to="/">VueTube</v-btn>
         
       </v-toolbar-title>
-      <v-btn text to="/admin/videos">Admin</v-btn>
-      <v-btn text to="/video/new">Add Video</v-btn>
+      <v-btn text to="/admin/videos" v-if="currentUser.admin == 1">Admin</v-btn>
+      <v-btn text to="/admin/video/new" v-if="currentUser.admin == 1">Add Video</v-btn>
       <v-spacer></v-spacer>
       <div v-if="currentUser.name">
         {{ currentUser.name }}

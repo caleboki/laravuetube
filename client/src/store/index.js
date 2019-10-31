@@ -10,7 +10,8 @@ export default new Vuex.Store({
     tags: [],
     playedVideos: [],
     users: [],
-    currentUser: {}
+    currentUser: {},
+    token: null
   },
 
   mutations: {
@@ -33,11 +34,16 @@ export default new Vuex.Store({
     },
     LOGOUT_USER(state) {
       state.currentUser = {}
-      window.localStorage.currentUser = JSON.stringify({});
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
     },
     SET_CURRENT_USER(state, user) {
       state.currentUser = user;
       window.localStorage.currentUser = JSON.stringify(user);
+    },
+    SET_TOKEN(state, token) {
+      state.token = token;
+      window.localStorage.token = JSON.stringify(token);
     },
     ADD_VIDEO(state, video) {
       let videos = state.videos.concat(video);
@@ -125,13 +131,16 @@ export default new Vuex.Store({
     },
 
     async loginUser({commit}, loginInfo) {
+      
       try {
-        let response = await Api().post('/sessions', loginInfo);
-        let user = response.data.user;
-
+        let response = await Api().post('/auth/login', loginInfo);
+        let user = response.data.user.original;
+        let token = response.data.access_token;
+        //console.log(token)
+        commit('SET_TOKEN', token);
         commit('SET_CURRENT_USER', user);
         return user;
-      } catch {
+      } catch(error) {
           return {error: "Email/password combination was incorrect.  Please try again."}
       }
 
@@ -145,7 +154,6 @@ export default new Vuex.Store({
         commit('SET_CURRENT_USER', user);
         return user;
       } catch(error) {
-        console.log(error.response)
         return {error: error.response.data.errors.email}
       }
     },

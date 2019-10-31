@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,14 +12,24 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function () {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
 });
 
 Route::get('videos', 'VideoController@index');
 Route::get('videos/{id}', 'VideoController@show');
 
-Route::post('videos', 'VideoController@store');
+Route::post('videos', 'VideoController@store')->middleware('auth:api', 'admin');
 Route::delete('videos/{id}', 'VideoController@destroy');
 
 Route::put('videos/{id}', 'VideoController@update');

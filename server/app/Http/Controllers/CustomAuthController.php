@@ -15,6 +15,8 @@ class CustomAuthController extends Controller
             return response()->json(['error' => 'Email or Password does not exist'], 401);
         }
 
+        //consider generating new token here ????
+
         return response()->json(['user' => Auth::user()]);
 
         //return response()->json(['user' => $credentials]);

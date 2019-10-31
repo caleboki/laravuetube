@@ -43,7 +43,7 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:255',
-    		'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:8'
         ]);
 
@@ -51,6 +51,7 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->admin = 0;
         $user->password = bcrypt($request->password);
         
         $user->save();
