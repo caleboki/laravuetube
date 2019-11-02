@@ -18,9 +18,16 @@ export default {
         async registerUser(registrationInfo){
             let user = await this.$store.dispatch('registerUser', registrationInfo);
             if(user.error){
-                alert(user.error)
+                //alert(user.error)
+                this.$store.dispatch('setSnackbar', {
+                    color: 'error', text: user.error[0]
+                });
                 } else {
-                alert('Welcme to our app, ' + user.name);
+                //alert('Welcme to our app, ' + user.name);
+                this.$store.dispatch('setSnackbar', {
+                    text: 'Welcome to our app ' + user.name
+                });
+                this.$router.push("/");
             }
       }
     }

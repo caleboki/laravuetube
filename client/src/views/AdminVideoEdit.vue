@@ -2,6 +2,7 @@
 
 <v-container>
   <VideoEditForm :video="video" :saveVideo="saveVideo" buttonText="Save Video"/>
+  
     
 </v-container>
     
@@ -15,6 +16,7 @@ export default {
     components: {
       VideoEditForm
     },
+    
     computed: {
       ...mapState(['videos']),
       video(){
@@ -34,7 +36,10 @@ export default {
 
     methods: {
       async saveVideo() {
-        await this.$store.dispatch('editVideo', this.video);
+        let video = await this.$store.dispatch('editVideo', this.video);
+        this.$store.dispatch('setSnackbar', {
+          text: `You have successfully edited your video, ${video.name}`
+        });
         this.$router.push({name: 'admin-video-list'});
       }
     },

@@ -11,7 +11,8 @@ export default new Vuex.Store({
     playedVideos: [],
     users: [],
     currentUser: {},
-    token: null
+    token: null,
+    snackbars: []
   },
 
   mutations: {
@@ -44,6 +45,9 @@ export default new Vuex.Store({
     SET_TOKEN(state, token) {
       state.token = token;
       window.localStorage.token = JSON.stringify(token);
+    },
+    SET_SNACKBAR(state, snackbar) {
+      state.snackbars = state.snackbars.concat(snackbar);
     },
     ADD_VIDEO(state, video) {
       let videos = state.videos.concat(video);
@@ -89,11 +93,26 @@ export default new Vuex.Store({
       
     },
 
-    getAuthenticatedUser({commit}){
-      if (localStorage.getItem("currentUser") !== null) {
-        let user = JSON.parse(window.localStorage.currentUser);
-        commit('SET_CURRENT_USER', user);
-      }
+    async getAuthenticatedUser({commit}){
+      // try {
+      //   let response = await Api().post('/auth/me');
+      //   let token = response.data.access_token;
+      //   let user = response.data.user;
+      //   commit('SET_TOKEN', token);
+      //   commit('SET_CURRENT_USER', user);      
+        
+      // } 
+      // catch (error) {
+      //   console.log(error)
+        
+      // }
+
+        if (localStorage.getItem("currentUser") !== null) {
+          let user = JSON.parse(window.localStorage.currentUser);
+          commit('SET_CURRENT_USER', user);
+        }
+      
+      
       
     },
 
@@ -160,6 +179,12 @@ export default new Vuex.Store({
 
     logoutUser({commit}) {
       commit('LOGOUT_USER');
+    },
+
+    setSnackbar({commit}, snackbar) {
+      snackbar.showing = true;
+      snackbar.color = snackbar.color || 'black'
+      commit('SET_SNACKBAR', snackbar);
     },
 
     

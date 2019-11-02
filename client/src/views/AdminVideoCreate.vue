@@ -41,6 +41,9 @@ export default {
     methods: {
       async createVideo() {
         let video = await this.$store.dispatch('createVideo', this.video);
+        this.$store.dispatch('setSnackbar', {
+          text: `You have successfully created a new video, ${video.name}`
+        });
         this.$router.push({ name: 'video-watch', params: {id: video.id}});
       }
     },
@@ -49,14 +52,5 @@ export default {
 </script>
 
 <style lang=scss scoped>
-/* .field {
-  input {
-    border: 1px solid black;
-  }
-label {
-    display: block;
-  }
-  padding-bottom: 10px;
-} */
 
 </style>

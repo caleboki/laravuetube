@@ -32,7 +32,7 @@ Route::get('videos/{id}', 'VideoController@show');
 Route::post('videos', 'VideoController@store')->middleware('auth:api', 'admin');
 Route::delete('videos/{id}', 'VideoController@destroy');
 
-Route::put('videos/{id}', 'VideoController@update');
+Route::put('videos/{id}', 'VideoController@update')->middleware('auth:api', 'admin');
 
 Route::get('users', 'UserController@index');
 Route::post('users', 'UserController@store');

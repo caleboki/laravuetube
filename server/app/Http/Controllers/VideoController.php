@@ -98,11 +98,6 @@ class VideoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        // return response()
-        //     ->json([
-        //         $request->name
-        //     ]);
 
         $this->validate($request, [
     		'name' => 'required|max:50',
