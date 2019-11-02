@@ -58,12 +58,31 @@ const routes = [
   {
     path: '/login',
     name: 'user-login',
-    component: UserLogin
+    component: UserLogin,
+    beforeEnter(to, from, next) {
+      let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+      if(currentUser && currentUser.admin) {
+        next("/");
+      } else {
+        next();
+        
+      }
+    },
+    
   },
   {
     path: '/registration',
     name: 'user-registration',
-    component: UserRegistration
+    component: UserRegistration,
+    beforeEnter(to, from, next) {
+      let currentUser = JSON.parse(localStorage.getItem('currentUser'))
+      if(currentUser && currentUser.admin) {
+        next("/");
+      } else {
+        next();
+        
+      }
+    },
   },
   {
     path: '/about',
