@@ -35,6 +35,7 @@ Route::delete('videos/{id}', 'VideoController@destroy');
 Route::put('videos/{id}', 'VideoController@update')->middleware('auth:api', 'admin');
 
 Route::get('users', 'UserController@index');
+Route::get('users/{id}', 'UserController@show');
 Route::post('users', 'UserController@store');
 
-Route::post('sessions', 'CustomAuthController@login');
+Route::post('video_played', 'UserController@playedVideos');

@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('videos')->get();
         
         return response()
     		->json([
@@ -71,6 +71,13 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        $user = User::with('videos')
+            ->where('id', $id)
+            ->get();
+        return response()
+    		->json([
+                'user' => $user,
+    		]);
         
     }
 
@@ -106,5 +113,17 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function playedVideos(Request $request)
+    {
+        $user = Auth::user();
+        $user->videos()->attach($request->videoId);
+
+        return response()
+    		->json([
+                'videoId' => $request->videoId,
+                'user' => $user
+    		]);
     }
 }

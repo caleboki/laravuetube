@@ -24,12 +24,6 @@ export default {
   },
   computed: {
     ...mapState(['videos', 'tags'])
-    // videos() {
-    //   return this.$store.state.videos
-    // },
-    // tags() {
-    //   return this.$store.state.tags
-    // }
   },
   
   

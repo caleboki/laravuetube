@@ -63,6 +63,7 @@ export default {
   methods: {
     logoutUser() {
       this.$store.dispatch("logoutUser");
+      this.$router.push("/");
     },
     loginUser({commit}, user) {
       commit('SET_CURRENT_USER', user);

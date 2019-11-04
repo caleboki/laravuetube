@@ -57,8 +57,8 @@ class TagsVideosTableSeeder extends Seeder
         ]);
 
         DB::table('tag_video')->insert([
-            'tag_id' => 1,
-            'video_id' => 4
+            'tag_id' => 4,
+            'video_id' => 1
         ]);
     }
 }

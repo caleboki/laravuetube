@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     videos: [],
     tags: [],
-    playedVideos: [],
+    //playedVideos: [],
     users: [],
     currentUser: {},
     token: null,
@@ -23,15 +23,16 @@ export default new Vuex.Store({
       state.tags = tags;
     },
     SET_PLAYED_VIDEOS(state, playedVideos) {
-      state.playedVideos = playedVideos;
+      //state.playedVideos = playedVideos;
+      //state.currentUser.playedVideos = playedVideos;
+      Vue.set(state.currentUser, 'playedVideos', playedVideos);
     },
     SET_USERS(state, users) {
       state.users = users;
     },
     MARK_VIDEO_PLAYED(state, videoId) {
-      let playedVideos = state.playedVideos.concat(videoId);
-      state.playedVideos = playedVideos;
-      window.localStorage.playedVideos = JSON.stringify(playedVideos);
+      let playedVideos = state.currentUser.playedVideos.concat(videoId);
+      state.currentUser.playedVideos = playedVideos;
     },
     LOGOUT_USER(state) {
       state.currentUser = {}
@@ -85,39 +86,59 @@ export default new Vuex.Store({
       })
       commit('SET_VIDEOS', videos.map(v => v)); 
       commit('SET_TAGS', tags);
+      
+    },
 
-      if (localStorage.getItem("playedVideos") !== null) {
-        let playedVideos = JSON.parse(window.localStorage.playedVideos);
-        commit('SET_PLAYED_VIDEOS', playedVideos);
+    async getAuthenticatedUser({commit, dispatch}){
+
+        if (localStorage.getItem("currentUser") && localStorage.getItem("token") !== null) {
+          //Check if user is authenticated at the backend
+          try {
+            let response = await Api().post('/auth/me');
+            let user = response.data
+            console.log(user)
+            commit('SET_CURRENT_USER', user);
+            dispatch('loadPlayedVideos', user.id);
+            
+          } catch (error) {
+            console.log(error)
+            commit('LOGOUT_USER');  
+          }
+          // let user = JSON.parse(window.localStorage.currentUser); 
+          // commit('SET_CURRENT_USER', user);
+
+          // //Get videos played by user
+          // let response = await Api().get(`/users/${user.id}`)
+          // let a = response.data.user[0].videos;
+          // let b = [];
+          // a.forEach(c => {
+          //   b.push(c.id)
+          // })
+          
+          // commit('SET_PLAYED_VIDEOS', b)
+        } 
+    },
+
+    async loadPlayedVideos({commit}, userId) {
+        //Get videos played by user
+        let uservid = await Api().get(`/users/${userId}`)
+        let a = uservid.data.user[0].videos;
+        let b = [];
+        a.forEach(c => {
+          b.push(c.id)
+        })
+        commit('SET_PLAYED_VIDEOS', b)
+    },
+
+    markPlayed({commit, state}, videoId) {
+      if (state.currentUser.name) {
+        commit('MARK_VIDEO_PLAYED', videoId);
+        Api().post('/video_played', {
+          videoId: videoId
+        });
+        
       }
       
-    },
-
-    async getAuthenticatedUser({commit}){
-      // try {
-      //   let response = await Api().post('/auth/me');
-      //   let token = response.data.access_token;
-      //   let user = response.data.user;
-      //   commit('SET_TOKEN', token);
-      //   commit('SET_CURRENT_USER', user);      
-        
-      // } 
-      // catch (error) {
-      //   console.log(error)
-        
-      // }
-
-        if (localStorage.getItem("currentUser") !== null) {
-          let user = JSON.parse(window.localStorage.currentUser);
-          commit('SET_CURRENT_USER', user);
-        }
-      
-      
-      
-    },
-
-    markPlayed({commit}, videoId) {
-      commit('MARK_VIDEO_PLAYED', videoId);
     },
 
     async createVideo({commit}, video) {
@@ -146,29 +167,34 @@ export default new Vuex.Store({
     async loadUsers({commit}) {
       let response = await Api().get('/users');
       let users = response.data.users;
+      console.log(users)
       commit('SET_USERS', users.map(u => u));
     },
 
-    async loginUser({commit}, loginInfo) {
+    async loginUser({commit, dispatch}, loginInfo) {
       
       try {
         let response = await Api().post('/auth/login', loginInfo);
         let user = response.data.user.original;
         let token = response.data.access_token;
-        //console.log(token)
+
+        dispatch('loadPlayedVideos', user.id);
+        
         commit('SET_TOKEN', token);
         commit('SET_CURRENT_USER', user);
         return user;
       } catch(error) {
-          return {error: "Email/password combination was incorrect.  Please try again."}
+          return {error: "Email/password combination was incorrect. Please try again."}
       }
 
     },
 
-    async registerUser({commit}, registrationInfo) {
+    async registerUser({commit, dispatch}, registrationInfo) {
       try {
         let response = await Api().post('/users', registrationInfo);
         let user = response.data.user;
+
+        dispatch('loadPlayedVideos', user.id);
 
         commit('SET_CURRENT_USER', user);
         return user;
@@ -177,8 +203,15 @@ export default new Vuex.Store({
       }
     },
 
-    logoutUser({commit}) {
+    async logoutUser({commit}) {
+      try {
+        let response = await Api().post('/auth/logout')
+      } catch (error) {
+        return error  
+      }
       commit('LOGOUT_USER');
+      
+      
     },
 
     setSnackbar({commit}, snackbar) {
@@ -190,5 +223,14 @@ export default new Vuex.Store({
     
   },
   modules: {
+  },
+  getters: {
+    playedVideos: state => {
+      return state.currentUser.playedVideos || []
+    },
+    isPlayed: (state, getters) => videoId => {
+      return getters.playedVideos.includes(videoId)
+
+    }
   }
 })
