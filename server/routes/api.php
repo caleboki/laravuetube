@@ -39,3 +39,6 @@ Route::get('users/{id}', 'UserController@show');
 Route::post('users', 'UserController@store');
 
 Route::post('video_played', 'UserController@playedVideos');
+
+Route::post('video_tag', 'TagController@syncTags');
+Route::get('tags/{id}', 'TagController@show');

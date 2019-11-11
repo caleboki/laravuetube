@@ -22,6 +22,22 @@ export default new Vuex.Store({
     SET_TAGS(state, tags) {
       state.tags = tags;
     },
+    async FILTER_TAGS(state, videoTag) {
+      
+      let tags_ids = [];
+      for (let index = 0; index < videoTag[0].length; index++) {
+        let tags = state.tags.filter(t => t.name == videoTag[0][index])[0];
+        console.log(tags)
+        tags_ids.push(tags.id);
+      }
+      
+      await Api().post('/video_tag', {
+        videoId: videoTag[1],
+        tags: tags_ids
+      });
+      
+
+    },
     SET_PLAYED_VIDEOS(state, playedVideos) {
       //state.playedVideos = playedVideos;
       //state.currentUser.playedVideos = playedVideos;
@@ -49,6 +65,9 @@ export default new Vuex.Store({
     },
     SET_SNACKBAR(state, snackbar) {
       state.snackbars = state.snackbars.concat(snackbar);
+    },
+    UNSET_SNACKBAR(state) {
+      state.snackbars.pop();
     },
     ADD_VIDEO(state, video) {
       let videos = state.videos.concat(video);
@@ -86,7 +105,6 @@ export default new Vuex.Store({
       })
       commit('SET_VIDEOS', videos.map(v => v)); 
       commit('SET_TAGS', tags);
-      
     },
 
     async getAuthenticatedUser({commit, dispatch}){
@@ -101,21 +119,10 @@ export default new Vuex.Store({
             dispatch('loadPlayedVideos', user.id);
             
           } catch (error) {
+            //if not logged in at the backend, clear token an user data in localstorage
             console.log(error)
             commit('LOGOUT_USER');  
           }
-          // let user = JSON.parse(window.localStorage.currentUser); 
-          // commit('SET_CURRENT_USER', user);
-
-          // //Get videos played by user
-          // let response = await Api().get(`/users/${user.id}`)
-          // let a = response.data.user[0].videos;
-          // let b = [];
-          // a.forEach(c => {
-          //   b.push(c.id)
-          // })
-          
-          // commit('SET_PLAYED_VIDEOS', b)
         } 
     },
 
@@ -135,10 +142,8 @@ export default new Vuex.Store({
         commit('MARK_VIDEO_PLAYED', videoId);
         Api().post('/video_played', {
           videoId: videoId
-        });
-        
-      }
-      
+        }); 
+      } 
     },
 
     async createVideo({commit}, video) {
@@ -154,7 +159,6 @@ export default new Vuex.Store({
       let newVideo = response.data.video;
       commit('EDIT_VIDEO', newVideo);
       return newVideo;
-
     },
 
     async deleteVideo({commit}, video) {
@@ -220,6 +224,26 @@ export default new Vuex.Store({
       commit('SET_SNACKBAR', snackbar);
     },
 
+    unsetSnackbar({commit}, snackbar) {
+      commit('UNSET_SNACKBAR');
+    },
+
+    async connectTagToVideo({commit, dispatch}, {video, tag}) {
+
+      let videoTag = []
+      videoTag.push(tag, video.id)
+      
+      // dispatch('setSnackbar', {
+      //   text: 'Syncing Tags...'
+      // });
+
+      commit('FILTER_TAGS', videoTag);
+      
+      dispatch('loadVideos');
+      // dispatch('unsetSnackbar');
+      
+    },
+
     
   },
   modules: {
@@ -230,7 +254,9 @@ export default new Vuex.Store({
     },
     isPlayed: (state, getters) => videoId => {
       return getters.playedVideos.includes(videoId)
-
+    },
+    getTag: state => id => {
+      return this.tags.find(tag => tag.id == this.$route.params.id) || {}
     }
   }
 })

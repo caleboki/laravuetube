@@ -19,14 +19,6 @@ export default {
         VideoListVideo
     },
     computed: {
-        // ...mapGetters(['getTag']),
-        // tag() {
-        //     return this.getTag(this.$route.params.id)
-        // },
-        // videosOnTag() {
-        //     return true
-        // }
-
         tag () {
             return this.$store.state.tags.find(tag => tag.id == this.$route.params.id) || {}
         },

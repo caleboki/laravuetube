@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Tag;
+use App\Video;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
@@ -44,9 +45,13 @@ class TagController extends Controller
      * @param  \App\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function show(Tag $tag)
+    public function show($tag)
     {
-        //
+        $tag = Tag::where('name', $tag)->first();
+        return response()->json([
+            'tag' => $tag
+
+        ]);
     }
 
     /**
@@ -81,5 +86,15 @@ class TagController extends Controller
     public function destroy(Tag $tag)
     {
         //
+    }
+
+    public function syncTags(Request $request) 
+    {
+        $video = Video::find($request->videoId);
+        $video->tags()->sync($request->tags);
+        return response()->json([
+            'video' => $video->tags
+
+        ]);
     }
 }

@@ -13,7 +13,7 @@
         </v-card-text>
 
         <v-card-actions>
-        <span v-for="tag_id in video.tags" :key="`${video.id}-${tag_id}`">
+        <span v-for="tag_id in video.tags" :key="tag_id + Math.random()">
             <v-btn color="green lighten-2" 
                 class="mr-2"
                 small
@@ -30,12 +30,14 @@
 import { mapState, mapGetters } from 'vuex';
 export default {
     computed: {
-        ...mapState(['tags']),
-        ...mapGetters(['playedVideos', 'isPlayed']),
+        // ...mapState(['tags']),
+        // ...mapGetters(['playedVideos', 'isPlayed']),
 
-        tag () {
-            return this.tags.find(tag => tag.id == this.$route.params.id) || {}
-        },
+        // tag () {
+        //     return this.tags.find(tag => tag.id == this.$route.params.id) || {}
+        // },
+
+        ...mapGetters(['isPlayed']),
     },
 
     props: ['video']
