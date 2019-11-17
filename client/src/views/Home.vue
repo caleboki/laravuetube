@@ -25,6 +25,11 @@ export default {
   computed: {
     ...mapState(['videos', 'tags'])
   },
+
+  mounted() {
+    this.$store.dispatch('loadVideos');
+    this.$store.dispatch('loadTags');
+  }
   
   
 }

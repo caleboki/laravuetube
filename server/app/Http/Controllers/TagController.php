@@ -15,7 +15,14 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $videos = Video::with('tags')->get();
+        $tags = Tag::with('videos')->get();
+        
+        return response()
+    		->json([
+                'videos' => $videos,
+                'tags' => $tags
+    		]);
     }
 
     /**
@@ -36,7 +43,24 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:25|unique:tags'
+        ]);
+
+        $tag = new Tag($request->all());
+        $tag->name = $request->name;
+        $tag->save();
+
+        //Attach just created tag to video
+        $id = $request->videoId;
+        $video = Video::findOrFail($id);
+        $video->tags()->attach($tag->id);
+
+        return response()->json([
+                                'videoId' => $id,
+                                'video' => $video,
+                                'tag' => $tag->name
+                                ]);
     }
 
     /**
@@ -88,13 +112,22 @@ class TagController extends Controller
         //
     }
 
-    public function syncTags(Request $request) 
+    public function attachTag(Request $request) 
+    {
+        $video = Video::find($request->videoId);       
+        $video->tags()->attach($request->tagId);
+        return response()->json([
+            'message' => 'Tags attached'
+        ]);
+    }
+
+    public function detachTag(Request $request)
     {
         $video = Video::find($request->videoId);
-        $video->tags()->sync($request->tags);
+        $video->tags()->detach($request->tagId);
         return response()->json([
-            'video' => $video->tags
-
+            'message' => 'Tags detached'
         ]);
+        
     }
 }

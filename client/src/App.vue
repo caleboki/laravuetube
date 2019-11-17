@@ -55,6 +55,7 @@ export default {
   mounted(){
     this.$store.dispatch('getAuthenticatedUser');
     this.$store.dispatch('loadVideos');
+    this.$store.dispatch('loadTags');
   },
   data: () => ({
     //

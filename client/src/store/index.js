@@ -22,25 +22,19 @@ export default new Vuex.Store({
     SET_TAGS(state, tags) {
       state.tags = tags;
     },
-    async FILTER_TAGS(state, videoTag) {
-      
-      let tags_ids = [];
-      for (let index = 0; index < videoTag[0].length; index++) {
-        let tags = state.tags.filter(t => t.name == videoTag[0][index])[0];
-        console.log(tags)
-        tags_ids.push(tags.id);
-      }
-      
-      await Api().post('/video_tag', {
-        videoId: videoTag[1],
-        tags: tags_ids
-      });
-      
+    // async FILTER_TAGS(state, videoTag) {
 
-    },
+    //   let tags_ids = [];
+    //   for (let index = 0; index < videoTag[0].length; index++) {
+    //     tags_ids.push(videoTag[0][index].id)  
+    //   }
+      
+    //   await Api().post('/video_tag', {
+    //     videoId: videoTag[1],
+    //     tags: tags_ids
+    //   });
+    // },
     SET_PLAYED_VIDEOS(state, playedVideos) {
-      //state.playedVideos = playedVideos;
-      //state.currentUser.playedVideos = playedVideos;
       Vue.set(state.currentUser, 'playedVideos', playedVideos);
     },
     SET_USERS(state, users) {
@@ -87,24 +81,33 @@ export default new Vuex.Store({
   },
 
   actions: {
-    async loadVideos({commit}){
+    async loadVideos({commit, dispatch}){
       let response = await Api().get('/videos');
       let videos = response.data.videos
-      let tags = response.data.tags
-      videos.forEach(v => {
-        v.tags.forEach(u => {
-          //get tags for each video
-          u.pivot.tag_id = tags.id
-        })
-      })
-      tags.forEach(t => {
-        //get videos for each tag
-        t.videos.forEach(w => {
-          w.pivot.video_id = videos.id
-        })
-      })
+      
+      
+      // videos.forEach(v => {
+      //   v.tags.forEach(u => {
+      //     //get tags for each video
+      //     u.pivot.tag_id = tags.id
+      //   })
+      // })
+      // tags.forEach(t => {
+      //   //get videos for each tag
+      //   t.videos.forEach(w => {
+      //     w.pivot.video_id = videos.id
+      //   })
+      // })
+      //dispatch('loadTags')
       commit('SET_VIDEOS', videos.map(v => v)); 
+      
+    },
+
+    async loadTags({commit}) {
+      let response = await Api().get('/tags');
+      let tags = response.data.tags;
       commit('SET_TAGS', tags);
+
     },
 
     async getAuthenticatedUser({commit, dispatch}){
@@ -228,21 +231,32 @@ export default new Vuex.Store({
       commit('UNSET_SNACKBAR');
     },
 
-    async connectTagToVideo({commit, dispatch}, {video, tag}) {
-
-      let videoTag = []
-      videoTag.push(tag, video.id)
+    async connectTagToVideo({commit, dispatch}, {video, tagId}) {
+      await Api().post('/attach_tag', {
+        videoId: video.id,
+        tagId: tagId.id
+      });
       
-      // dispatch('setSnackbar', {
-      //   text: 'Syncing Tags...'
-      // });
-
-      commit('FILTER_TAGS', videoTag);
-      
-      dispatch('loadVideos');
-      // dispatch('unsetSnackbar');
-      
+      //dispatch('loadVideos');
+      //dispatch('loadTags');
+     
     },
+
+    async disconnectTagFromVideo({commit, dispatch}, {video, tagId}) {
+      await Api().post('/detach_tag', {
+        videoId: video.id,
+        tagId: tagId.id
+      });
+    },
+
+    async createTag({commit, dispatch}, {videoId, name}) {
+      let response = await Api().post('/tags', {videoId, name})
+      dispatch('loadVideos');
+      dispatch('loadTags')
+      
+      //commit('CREATE_TAG'); 
+
+    }
 
     
   },

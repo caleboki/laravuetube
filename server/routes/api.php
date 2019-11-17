@@ -40,5 +40,8 @@ Route::post('users', 'UserController@store');
 
 Route::post('video_played', 'UserController@playedVideos');
 
-Route::post('video_tag', 'TagController@syncTags');
+Route::get('tags', 'TagController@index');
+Route::post('attach_tag', 'TagController@attachTag');
+Route::post('detach_tag', 'TagController@detachTag');
+Route::post('tags', 'TagController@store');
 Route::get('tags/{id}', 'TagController@show');
