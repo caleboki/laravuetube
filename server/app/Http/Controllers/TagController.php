@@ -117,16 +117,22 @@ class TagController extends Controller
         $video = Video::find($request->videoId);       
         $video->tags()->attach($request->tagId);
         return response()->json([
-            'message' => 'Tags attached'
+            'message' => 'Tag attached'
         ]);
     }
 
     public function detachTag(Request $request)
     {
+        $tagIds = [];
+
+        foreach ($request->tags as $tag) {
+            array_push($tagIds, $tag['id']);
+        }
+
         $video = Video::find($request->videoId);
-        $video->tags()->detach($request->tagId);
+        $video->tags()->sync($tagIds);
         return response()->json([
-            'message' => 'Tags detached'
+            'message' => 'Tag detached'
         ]);
         
     }

@@ -17,7 +17,6 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import _ from 'lodash';
 
 export default {
 
@@ -39,23 +38,17 @@ export default {
             return
           }
 
-          //Use lodash difference operator to get removed tags, then loop through the ids at backend and detach
-          let addedTags = _.differenceBy(newTags, this.videoTags, 'id');
-          let removedTags = _.differenceBy(this.videoTags, newTags, 'id');
-
-          if(addedTags.length > 0) {
-            this.$store.dispatch('connectTagToVideo', {tagId: addedTags[0], video: this.video})
+          let videoTagsLength = this.videoTags.length;
+          let newTagsLength = newTags.length;
+          
+          if (newTagsLength - videoTagsLength > 0) {
+            await this.$store.dispatch('connectTagToVideo', {tagId: newTags[newTagsLength - 1], video: this.video})
+            return
           }
-          if(removedTags.length > 0) {
-            this.$store.dispatch('disconnectTagFromVideo', {tagId: removedTags[0], video: this.video})
+          else {
+            this.$store.dispatch('disconnectTagFromVideo', {tags: newTags, video: this.video})
           }
           
-          // if (videoTagsLength - newTagsLength > 0) {
-          //   this.$store.dispatch('connectTagToVideo', {tagId: newTags[newTags.length - 1], video: this.video})
-          //   return
-          // }
-        
-          //this.$store.dispatch('connectTagToVideo', {tagId: newTags[newTags.length - 1], video: this.video})
         }
       }, 
 

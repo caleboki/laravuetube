@@ -242,11 +242,12 @@ export default new Vuex.Store({
      
     },
 
-    async disconnectTagFromVideo({commit, dispatch}, {video, tagId}) {
+    async disconnectTagFromVideo({commit, dispatch}, {video, tags}) {
       await Api().post('/detach_tag', {
         videoId: video.id,
-        tagId: tagId.id
+        tags: tags
       });
+      
     },
 
     async createTag({commit, dispatch}, {videoId, name}) {
