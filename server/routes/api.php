@@ -37,7 +37,6 @@ Route::put('videos/{id}', 'VideoController@update')->middleware('auth:api', 'adm
 Route::get('users', 'UserController@index');
 Route::get('users/{id}', 'UserController@show');
 Route::post('users', 'UserController@store');
-
 Route::post('video_played', 'UserController@playedVideos');
 
 Route::get('tags', 'TagController@index');
@@ -45,3 +44,5 @@ Route::post('attach_tag', 'TagController@attachTag');
 Route::post('detach_tag', 'TagController@detachTag');
 Route::post('tags', 'TagController@store');
 Route::get('tags/{id}', 'TagController@show');
+Route::put('tags/{id}', 'TagController@update');
+Route::delete('tags/{id}', 'TagController@destroy');

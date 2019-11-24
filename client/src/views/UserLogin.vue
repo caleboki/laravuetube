@@ -23,7 +23,8 @@ export default {
           color: 'error', text: user.error
           });
           
-        } else {
+        } 
+        else {
             this.$store.dispatch('setSnackbar', {
             text: 'Thank you for signing in, ' + user.name
           });

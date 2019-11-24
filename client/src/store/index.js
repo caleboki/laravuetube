@@ -22,18 +22,7 @@ export default new Vuex.Store({
     SET_TAGS(state, tags) {
       state.tags = tags;
     },
-    // async FILTER_TAGS(state, videoTag) {
-
-    //   let tags_ids = [];
-    //   for (let index = 0; index < videoTag[0].length; index++) {
-    //     tags_ids.push(videoTag[0][index].id)  
-    //   }
-      
-    //   await Api().post('/video_tag', {
-    //     videoId: videoTag[1],
-    //     tags: tags_ids
-    //   });
-    // },
+    
     SET_PLAYED_VIDEOS(state, playedVideos) {
       Vue.set(state.currentUser, 'playedVideos', playedVideos);
     },
@@ -77,6 +66,15 @@ export default new Vuex.Store({
           v = video;
         }
       })
+    },
+
+    UPDATE_TAG_NAME(state, {tag}) {
+      let tagToUpdate = state.tags.find(t => t.id == tag.id)
+      tagToUpdate.name = tag.name
+    },
+
+    DELETE_TAG(state, {tag}) {
+      state.tags = state.tags.filter(t => t.id != tag.id)
     }
   },
 
@@ -117,7 +115,7 @@ export default new Vuex.Store({
           try {
             let response = await Api().post('/auth/me');
             let user = response.data
-            console.log(user)
+            //console.log(user)
             commit('SET_CURRENT_USER', user);
             dispatch('loadPlayedVideos', user.id);
             
@@ -253,10 +251,31 @@ export default new Vuex.Store({
     async createTag({commit, dispatch}, {videoId, name}) {
       let response = await Api().post('/tags', {videoId, name})
       dispatch('loadVideos');
-      dispatch('loadTags')
-      
+      dispatch('loadTags');
       //commit('CREATE_TAG'); 
+    },
 
+    async updateTagName({commit, dispatch}, {tag}) {
+
+      let response = await Api().put(`/tags/${tag.id}`, tag)
+        commit('UPDATE_TAG_NAME', {tag});
+
+      // try {
+      //   let response = await Api().put(`/tags/${tag.id}`, tag)
+      //   commit('UPDATE_TAG_NAME', {tag});
+        
+      // } catch (error) {
+      //     // console.log(error)
+      //     dispatch('loadTags');
+      //     return {error: 'The Tag name has already been taken'}
+        
+      // }
+      
+    },
+
+    deleteTag({commit}, {tag}) {
+      Api().delete(`/tags/${tag.id}`);
+      commit('DELETE_TAG', {tag})
     }
 
     
@@ -271,7 +290,7 @@ export default new Vuex.Store({
       return getters.playedVideos.includes(videoId)
     },
     getTag: state => id => {
-      return this.tags.find(tag => tag.id == this.$route.params.id) || {}
+      return state.tags.find(t => t.id == id) || {}
     }
   }
 })

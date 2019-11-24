@@ -13,15 +13,15 @@
         </v-card-text>
 
         <v-card-actions>
-        <span v-for="tag_id in video.tags" :key="tag_id + Math.random()">
-            <v-btn color="green lighten-2" 
-                class="mr-2"
-                small
-                @mousedown.stop
-                :to="{ name: 'tag', params: {id: tag_id.id}}">
-                {{tag_id.name}}
-            </v-btn>
-        </span>
+            <span v-for="tag_id in video.tags" :key="tag_id + Math.random()">
+                <v-btn color="green lighten-2" 
+                    class="mr-2"
+                    small
+                    @mousedown.stop
+                    :to="{ name: 'tag', params: {id: tag_id.id}}">
+                    {{tag_id.name}}
+                </v-btn>
+            </span>
         </v-card-actions>
     </v-card>
 </template>

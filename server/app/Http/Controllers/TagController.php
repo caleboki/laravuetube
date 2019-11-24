@@ -51,16 +51,24 @@ class TagController extends Controller
         $tag->name = $request->name;
         $tag->save();
 
-        //Attach just created tag to video
-        $id = $request->videoId;
-        $video = Video::findOrFail($id);
-        $video->tags()->attach($tag->id);
+        if($request->videoId) {
+             //Attach just created tag to video
+            $id = $request->videoId;
+            $video = Video::findOrFail($id);
+            $video->tags()->attach($tag->id);
+
+            return response()->json([
+                'videoId' => $id,
+                'video' => $video,
+                'tag' => $tag->name
+                ]);
+
+        }
 
         return response()->json([
-                                'videoId' => $id,
-                                'video' => $video,
-                                'tag' => $tag->name
-                                ]);
+            'tag' => $tag->name
+            ]);
+        
     }
 
     /**
@@ -98,7 +106,22 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $tag = Tag::findOrFail($request->id);
+
+        if ($request->name == $tag->name) {
+            return;
+        }
+
+        $this->validate($request, [
+            'name' => 'required|max:25|unique:tags'
+        ]);
+        
+        $tag->name = $request->name;
+        $tag->save();
+
+        return response()->json([
+            'updatedTag' => $tag
+        ]);
     }
 
     /**
@@ -107,9 +130,13 @@ class TagController extends Controller
      * @param  \App\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tag $tag)
+    public function destroy(Request $request, Tag $tag)
     {
-        //
+        $tag = Tag::findOrFail($request->id);
+        $tag->videos()->detach();
+        $tag->delete();
+
+        return 204;
     }
 
     public function attachTag(Request $request) 
