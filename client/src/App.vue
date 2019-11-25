@@ -51,23 +51,20 @@ export default {
   computed: {
     // ...mapState(['currentUser', 'snackbars'])
     ...mapState({
-      currentUser: 'currentUser', 
+      currentUser: state => state.users.currentUser, 
       snackbars: state => state.snackbar.snackbars
     })
   },
 
   created(){
-    this.$store.dispatch('getAuthenticatedUser');
+    this.$store.dispatch('users/getAuthenticatedUser');
     this.$store.dispatch('videos/loadVideos');
     this.$store.dispatch('tags/loadTags');
   },
-  data: () => ({
-    //
-  }),
 
   methods: {
     logoutUser() {
-      this.$store.dispatch("logoutUser");
+      this.$store.dispatch("users/logoutUser");
       this.$router.push("/");
     },
     loginUser({commit}, user) {

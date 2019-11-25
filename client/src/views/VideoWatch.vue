@@ -42,9 +42,15 @@ export default {
     
     ...mapState({
       videos: state => state.videos.videos,
-      currentUser: 'currentUser'
+      currentUser: state => state.users.currentUser
     }),
-    ...mapGetters(['playedVideos', 'isPlayed']),
+    // ...mapGetters(['playedVideos', 'users/isPlayed']),
+
+    ...mapGetters({
+      getTag: 'tags/getTag',
+      playedVideos: 'playedVideos',
+      isPlayed: 'users/isPlayed'
+    }),
 
     video () {
       return this.videos.find(vid => vid.id == this.$route.params.id) || {}
@@ -67,7 +73,7 @@ export default {
 
   methods: {
     markPlayed(){
-      this.$store.dispatch('markPlayed', this.video.id);
+      this.$store.dispatch('users/markPlayed', this.video.id);
     }
   }
 

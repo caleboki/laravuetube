@@ -16,7 +16,7 @@ export default {
 
     methods: {
         async registerUser(registrationInfo){
-            let user = await this.$store.dispatch('registerUser', registrationInfo);
+            let user = await this.$store.dispatch('users/registerUser', registrationInfo);
             if(user.error){
                 //alert(user.error)
                 this.$store.dispatch('snackbar/setSnackbar', {

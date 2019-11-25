@@ -15,7 +15,7 @@ export default {
 
     methods: {
       async loginUser(loginInfo) {
-        let user = await this.$store.dispatch('loginUser', loginInfo);
+        let user = await this.$store.dispatch('users/loginUser', loginInfo);
         console.log(user);
         if(user.error){
           //alert(user.error)

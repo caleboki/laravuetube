@@ -30,14 +30,10 @@
 import { mapState, mapGetters } from 'vuex';
 export default {
     computed: {
-        // ...mapState(['tags']),
-        // ...mapGetters(['playedVideos', 'isPlayed']),
-
-        // tag () {
-        //     return this.tags.find(tag => tag.id == this.$route.params.id) || {}
-        // },
-
-        ...mapGetters(['isPlayed']),
+        // ...mapGetters(['users/isPlayed']),
+        ...mapGetters({
+            isPlayed: 'users/isPlayed'
+        }),
     },
 
     props: ['video']
