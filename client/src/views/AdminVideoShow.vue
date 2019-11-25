@@ -9,7 +9,8 @@
                     multiple
                     chips
                     deletable-chips
-                    hide-selected>
+                    hide-selected
+                    return-object>
     </v-combobox>
 </div>
     
@@ -19,12 +20,21 @@
 import { mapState, mapGetters } from 'vuex';
 
 export default {
-
+  
     computed: {
-        ...mapState(['videos', 'tags']),
-      video(){
-        return this.videos.find(v => v.id == this.$route.params.id);
-      },
+
+        ...mapState({
+          videos: 'videos',
+          tags: state => state.tags.tags
+        }),
+
+        ...mapGetters({
+          getTag: 'tags/get'
+        }),
+
+        video(){
+          return this.videos.find(v => v.id == this.$route.params.id);
+        },
 
       videoTags: {
         get() {
@@ -34,7 +44,7 @@ export default {
           //Check if new & non-existing tag has been entered
           let createdTag = newTags.find(t => typeof t == 'string') 
           if (createdTag) {
-            await this.$store.dispatch('createTag', {name: createdTag, videoId: this.video.id});
+            await this.$store.dispatch('tags/createTag', {name: createdTag, videoId: this.video.id});
             return
           }
 
@@ -42,11 +52,11 @@ export default {
           let newTagsLength = newTags.length;
           
           if (newTagsLength - videoTagsLength > 0) {
-            await this.$store.dispatch('connectTagToVideo', {tagId: newTags[newTagsLength - 1], video: this.video})
+            await this.$store.dispatch('tags/connectTagToVideo', {tagId: newTags[newTagsLength - 1], video: this.video})
             return
           }
           else {
-            this.$store.dispatch('disconnectTagFromVideo', {tags: newTags, video: this.video})
+            this.$store.dispatch('tags/disconnectTagFromVideo', {tags: newTags, video: this.video})
           }
           
         }

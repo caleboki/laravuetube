@@ -19,13 +19,13 @@ export default {
         console.log(user);
         if(user.error){
           //alert(user.error)
-          this.$store.dispatch('setSnackbar', {
+          this.$store.dispatch('snackbar/setSnackbar', {
           color: 'error', text: user.error
           });
           
         } 
         else {
-            this.$store.dispatch('setSnackbar', {
+            this.$store.dispatch('snackbar/setSnackbar', {
             text: 'Thank you for signing in, ' + user.name
           });
             if (user.admin == 1) {

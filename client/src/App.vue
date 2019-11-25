@@ -49,13 +49,17 @@ export default {
     
   },
   computed: {
-    ...mapState(['currentUser', 'snackbars'])
+    // ...mapState(['currentUser', 'snackbars'])
+    ...mapState({
+      currentUser: 'currentUser', 
+      snackbars: state => state.snackbar.snackbars
+    })
   },
 
-  mounted(){
+  created(){
     this.$store.dispatch('getAuthenticatedUser');
     this.$store.dispatch('loadVideos');
-    this.$store.dispatch('loadTags');
+    this.$store.dispatch('tags/loadTags');
   },
   data: () => ({
     //

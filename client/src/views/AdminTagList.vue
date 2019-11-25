@@ -52,7 +52,9 @@ export default {
         }
     },
     computed: {
-        ...mapState(['tags']) 
+        ...mapState({
+            tags: state => state.tags.tags
+        }) 
     },
     
     methods: {
@@ -65,12 +67,12 @@ export default {
       },
 
       async updateTagName(tag) {
-        let update = await this.$store.dispatch('updateTagName', {tag}).then(response=>{
+        let update = await this.$store.dispatch('tags/updateTagName', {tag}).then(response=>{
             
         }).catch((error)=>{
             
-            this.$store.dispatch('loadTags');
-            this.$store.dispatch('setSnackbar', {
+            this.$store.dispatch('tags/loadTags');
+            this.$store.dispatch('snackbar/setSnackbar', {
                 color: 'error', text: error.response.data.errors.name[0]
             });
 
@@ -81,7 +83,7 @@ export default {
       deleteTag(tag) {
         let confirmed = confirm(`Are you sure you want to delete tag ${tag.name}? It is connected to ${tag.videos.length} videos.`)
         if(confirmed){
-          this.$store.dispatch('deleteTag', {tag});
+          this.$store.dispatch('tags/deleteTag', {tag});
         }
       },
 
@@ -95,7 +97,7 @@ export default {
       createTag() {
 
           if(this.newTagName.length > 0) {
-            this.$store.dispatch('createTag', {name: this.newTagName})
+            this.$store.dispatch('tags/createTag', {name: this.newTagName})
             this.newTagName = ''
             }
             this.isEditingNewTag = false

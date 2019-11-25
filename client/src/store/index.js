@@ -1,26 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Api from '@/services/api'
+import snackbarModule from './snackbar';
+import tagsModule from './tags';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  modules: {
+    snackbar: snackbarModule,
+    tags: tagsModule
+  },
+  
   state: {
     videos: [],
-    tags: [],
-    //playedVideos: [],
     users: [],
     currentUser: {},
-    token: null,
-    snackbars: []
+    token: null
   },
 
   mutations: {
     SET_VIDEOS(state, videos) {
       state.videos = videos;
-    },
-    SET_TAGS(state, tags) {
-      state.tags = tags;
     },
     
     SET_PLAYED_VIDEOS(state, playedVideos) {
@@ -46,12 +47,6 @@ export default new Vuex.Store({
       state.token = token;
       window.localStorage.token = JSON.stringify(token);
     },
-    SET_SNACKBAR(state, snackbar) {
-      state.snackbars = state.snackbars.concat(snackbar);
-    },
-    UNSET_SNACKBAR(state) {
-      state.snackbars.pop();
-    },
     ADD_VIDEO(state, video) {
       let videos = state.videos.concat(video);
       state.videos = videos;
@@ -66,15 +61,6 @@ export default new Vuex.Store({
           v = video;
         }
       })
-    },
-
-    UPDATE_TAG_NAME(state, {tag}) {
-      let tagToUpdate = state.tags.find(t => t.id == tag.id)
-      tagToUpdate.name = tag.name
-    },
-
-    DELETE_TAG(state, {tag}) {
-      state.tags = state.tags.filter(t => t.id != tag.id)
     }
   },
 
@@ -82,30 +68,7 @@ export default new Vuex.Store({
     async loadVideos({commit, dispatch}){
       let response = await Api().get('/videos');
       let videos = response.data.videos
-      
-      
-      // videos.forEach(v => {
-      //   v.tags.forEach(u => {
-      //     //get tags for each video
-      //     u.pivot.tag_id = tags.id
-      //   })
-      // })
-      // tags.forEach(t => {
-      //   //get videos for each tag
-      //   t.videos.forEach(w => {
-      //     w.pivot.video_id = videos.id
-      //   })
-      // })
-      //dispatch('loadTags')
-      commit('SET_VIDEOS', videos.map(v => v)); 
-      
-    },
-
-    async loadTags({commit}) {
-      let response = await Api().get('/tags');
-      let tags = response.data.tags;
-      commit('SET_TAGS', tags);
-
+      commit('SET_VIDEOS', videos.map(v => v));      
     },
 
     async getAuthenticatedUser({commit, dispatch}){
@@ -215,73 +178,11 @@ export default new Vuex.Store({
         return error  
       }
       commit('LOGOUT_USER');
-      
-      
     },
-
-    setSnackbar({commit}, snackbar) {
-      snackbar.showing = true;
-      snackbar.color = snackbar.color || 'black'
-      commit('SET_SNACKBAR', snackbar);
-    },
-
-    unsetSnackbar({commit}, snackbar) {
-      commit('UNSET_SNACKBAR');
-    },
-
-    async connectTagToVideo({commit, dispatch}, {video, tagId}) {
-      await Api().post('/attach_tag', {
-        videoId: video.id,
-        tagId: tagId.id
-      });
-      
-      //dispatch('loadVideos');
-      //dispatch('loadTags');
-     
-    },
-
-    async disconnectTagFromVideo({commit, dispatch}, {video, tags}) {
-      await Api().post('/detach_tag', {
-        videoId: video.id,
-        tags: tags
-      });
-      
-    },
-
-    async createTag({commit, dispatch}, {videoId, name}) {
-      let response = await Api().post('/tags', {videoId, name})
-      dispatch('loadVideos');
-      dispatch('loadTags');
-      //commit('CREATE_TAG'); 
-    },
-
-    async updateTagName({commit, dispatch}, {tag}) {
-
-      let response = await Api().put(`/tags/${tag.id}`, tag)
-        commit('UPDATE_TAG_NAME', {tag});
-
-      // try {
-      //   let response = await Api().put(`/tags/${tag.id}`, tag)
-      //   commit('UPDATE_TAG_NAME', {tag});
-        
-      // } catch (error) {
-      //     // console.log(error)
-      //     dispatch('loadTags');
-      //     return {error: 'The Tag name has already been taken'}
-        
-      // }
-      
-    },
-
-    deleteTag({commit}, {tag}) {
-      Api().delete(`/tags/${tag.id}`);
-      commit('DELETE_TAG', {tag})
-    }
 
     
   },
-  modules: {
-  },
+ 
   getters: {
     playedVideos: state => {
       return state.currentUser.playedVideos || []
@@ -289,8 +190,6 @@ export default new Vuex.Store({
     isPlayed: (state, getters) => videoId => {
       return getters.playedVideos.includes(videoId)
     },
-    getTag: state => id => {
-      return state.tags.find(t => t.id == id) || {}
-    }
+    
   }
 })

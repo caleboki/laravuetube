@@ -28,10 +28,8 @@ export default {
 
   mounted() {
     this.$store.dispatch('loadVideos');
-    this.$store.dispatch('loadTags');
+    this.$store.dispatch('tags/loadTags');
   }
-  
-  
 }
 </script>
 
