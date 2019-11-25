@@ -40,7 +40,10 @@ export default {
  
   computed: {
     
-    ...mapState(['videos', 'currentUser']),
+    ...mapState({
+      videos: state => state.videos.videos,
+      currentUser: 'currentUser'
+    }),
     ...mapGetters(['playedVideos', 'isPlayed']),
 
     video () {

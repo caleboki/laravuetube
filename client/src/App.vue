@@ -58,7 +58,7 @@ export default {
 
   created(){
     this.$store.dispatch('getAuthenticatedUser');
-    this.$store.dispatch('loadVideos');
+    this.$store.dispatch('videos/loadVideos');
     this.$store.dispatch('tags/loadTags');
   },
   data: () => ({

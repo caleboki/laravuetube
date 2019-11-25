@@ -3,27 +3,24 @@ import Vuex from 'vuex'
 import Api from '@/services/api'
 import snackbarModule from './snackbar';
 import tagsModule from './tags';
+import videosModule from './videos';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     snackbar: snackbarModule,
-    tags: tagsModule
+    tags: tagsModule,
+    videos: videosModule
   },
   
   state: {
-    videos: [],
     users: [],
     currentUser: {},
     token: null
   },
 
   mutations: {
-    SET_VIDEOS(state, videos) {
-      state.videos = videos;
-    },
-    
     SET_PLAYED_VIDEOS(state, playedVideos) {
       Vue.set(state.currentUser, 'playedVideos', playedVideos);
     },
@@ -46,30 +43,10 @@ export default new Vuex.Store({
     SET_TOKEN(state, token) {
       state.token = token;
       window.localStorage.token = JSON.stringify(token);
-    },
-    ADD_VIDEO(state, video) {
-      let videos = state.videos.concat(video);
-      state.videos = videos;
-    },
-    DELETE_VIDEO(state, videoId){
-      let videos = state.videos.filter(v => v.id != videoId)
-      state.videos = videos;
-    },
-    EDIT_VIDEO(state, video) {
-      state.videos.forEach(v => {
-        if(v.id == video.id) {
-          v = video;
-        }
-      })
     }
   },
 
   actions: {
-    async loadVideos({commit, dispatch}){
-      let response = await Api().get('/videos');
-      let videos = response.data.videos
-      commit('SET_VIDEOS', videos.map(v => v));      
-    },
 
     async getAuthenticatedUser({commit, dispatch}){
 
@@ -108,28 +85,6 @@ export default new Vuex.Store({
           videoId: videoId
         }); 
       } 
-    },
-
-    async createVideo({commit}, video) {
-      let response = await Api().post('/videos', video);
-      //debugger
-      let savedVideo = response.data.video;
-      commit('ADD_VIDEO', savedVideo);
-      return savedVideo;
-    },
-
-    async editVideo({commit}, video) {
-      let response = await Api().put(`/videos/${video.id}`, video);
-      let newVideo = response.data.video;
-      commit('EDIT_VIDEO', newVideo);
-      return newVideo;
-    },
-
-    async deleteVideo({commit}, video) {
-      let response = await Api().delete(`/videos/${video.id}`);
-      if(response.status == 200 || response.status == 204){
-        commit('DELETE_VIDEO', video.id);
-      }
     },
 
     async loadUsers({commit}) {

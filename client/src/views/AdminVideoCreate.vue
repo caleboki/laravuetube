@@ -40,7 +40,7 @@ export default {
     },
     methods: {
       async createVideo() {
-        let video = await this.$store.dispatch('createVideo', this.video);
+        let video = await this.$store.dispatch('videos/createVideo', this.video);
         this.$store.dispatch('snackbar/setSnackbar', {
           text: `You have successfully created a new video, ${video.name}`
         });

@@ -23,11 +23,14 @@ export default {
     VideoListVideo
   },
   computed: {
-    ...mapState(['videos', 'tags'])
+    // ...mapState(['videos', 'tags'])
+    ...mapState({
+      videos: state => state.videos.videos
+    }),
   },
 
   mounted() {
-    this.$store.dispatch('loadVideos');
+    this.$store.dispatch('videos/loadVideos');
     this.$store.dispatch('tags/loadTags');
   }
 }
