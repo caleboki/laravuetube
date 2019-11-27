@@ -38,14 +38,12 @@ export default {
       commit('ADD_VIDEO', savedVideo);
       return savedVideo;
     },
-
     async deleteVideo({commit}, video) {
       let response = await Api().delete(`/videos/${video.id}`);
       if(response.status == 200 || response.status == 204){
         commit('DELETE_VIDEO', video.id);
       }
     },
-
     async editVideo({commit}, video) {
       let response = await Api().put(`/videos/${video.id}`, video);
       let newVideo = response.data.video;
