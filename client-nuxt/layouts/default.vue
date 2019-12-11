@@ -1,10 +1,40 @@
 <template>
   <div>
-    <nuxt />
+    <div id="navbar">
+      <div class="navbar-links">
+        <nuxt-link to="/">Home</nuxt-link>
+        <nuxt-link to="/videos">Videos</nuxt-link>
+      </div>
+    </div>
+    <div id="default-body">
+      <nuxt />
+    </div>
+    
   </div>
 </template>
 
 <style>
+#default-body {
+  max-width: 800px;
+  margin: auto;
+}
+#navbar {
+  height: 40px;
+  width: 100%;
+  background-color: #333;
+}
+
+#navbar a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+#navbar .navbar-links {
+  max-width: 800px;
+  margin: auto;
+
+}
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
