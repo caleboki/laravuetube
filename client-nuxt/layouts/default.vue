@@ -1,40 +1,19 @@
 <template>
-  <div>
-    <div id="navbar">
-      <div class="navbar-links">
-        <nuxt-link to="/">Home</nuxt-link>
-        <nuxt-link to="/videos">Videos</nuxt-link>
-      </div>
-    </div>
-    <div id="default-body">
+  <v-app>
+    <v-app-bar app color="green">
+      <!-- <v-toolbar-title class="headline text-uppercase"></v-toolbar-title> -->
+      <v-btn text to="/">VueTube</v-btn>
+      <v-btn text to="/videos">Videos</v-btn>
+    </v-app-bar>
+    <v-content>
       <nuxt />
-    </div>
+    </v-content>
     
-  </div>
+  </v-app>
 </template>
 
 <style>
-#default-body {
-  max-width: 800px;
-  margin: auto;
-}
-#navbar {
-  height: 40px;
-  width: 100%;
-  background-color: #333;
-}
 
-#navbar a {
-  color: #fff;
-  text-decoration: none;
-  margin-right: 10px;
-}
-
-#navbar .navbar-links {
-  max-width: 800px;
-  margin: auto;
-
-}
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;

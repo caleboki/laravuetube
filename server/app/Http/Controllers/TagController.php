@@ -77,12 +77,11 @@ class TagController extends Controller
      * @param  \App\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function show($tag)
+    public function show($id)
     {
-        $tag = Tag::where('name', $tag)->first();
+        $tag = Tag::with('videos')->findOrFail($id);
         return response()->json([
             'tag' => $tag
-
         ]);
     }
 
