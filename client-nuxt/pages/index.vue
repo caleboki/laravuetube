@@ -16,20 +16,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VideoListVideo from '../components/VideoListVideo'
 
 export default {
   components: {
     VideoListVideo
   },
+  computed: {
+    ...mapState(['tags', 'videos'])
+  }
 
-   async asyncData({$axios}) {
-    let response = await $axios.get('/videos')
-    let videos = response.data.videos;
-
-    return { videos }
-   }
-  
 }
 </script>
 

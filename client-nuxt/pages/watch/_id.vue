@@ -37,9 +37,9 @@
 </template>
 
 <script>
-
 import 'video.js/dist/video-js.css'
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 if (process.browser) {
   const VueVideoPlayer = require('vue-video-player/dist/ssr')
@@ -47,15 +47,16 @@ if (process.browser) {
 }
 
 export default {
-    async asyncData({$axios, params}) {
-        let response = await $axios.get(`/videos/${params.id}`)
-        let video = response.data.video;
-        return { video } 
-    },
+    
 
     computed: {
-      playerOptions() {
+      
+      ...mapState(['tags', 'videos']),
+      video() {
+        return this.videos.find(v => v.id == this.$route.params.id)
+      },
 
+      playerOptions() {
         return {
           language: 'en',
           playbackRates: [0.7, 1.0, 1.5, 2.0, 2.5, 3.0],

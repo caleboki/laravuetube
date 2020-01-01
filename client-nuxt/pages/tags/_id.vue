@@ -12,30 +12,28 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VideoListVideo from '@/components/VideoListVideo';
 
 export default {
-    
     components: {
       VideoListVideo
     },
+    computed: {
+        ...mapState(['tags', 'videos']),
 
-    async asyncData({$axios, params}) {
-        
-        let responseTag = await $axios.get(`/tags/${params.id}`)
-        let tag = responseTag.data.tag;
-        let responseVideo = await $axios.get(`/videos`)
-        let videos = responseVideo.data.videos
-        let tagVideoIds = []
-
-        tag.videos.forEach(element => {
+        videosOnTag(){
+            let tagVideoIds = []
+            this.tag.videos.forEach(element => {
                 tagVideoIds.push(element.id)
             });
-        let videosOnTag = videos.filter(v => tagVideoIds.includes(v.id))
+            return this.videos.filter(v => tagVideoIds.includes(v.id))
+        },
 
-        return {tag, videosOnTag}
+        tag(){
+            return this.tags.find(t => t.id == this.$route.params.id)
+        }
     }
-    
 }
 </script>
 
