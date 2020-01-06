@@ -3,18 +3,40 @@
     <v-app-bar app color="green">
       <!-- <v-toolbar-title class="headline text-uppercase"></v-toolbar-title> -->
       <v-btn text to="/">VueTube</v-btn>
-      <v-btn text to="/videos">Videos</v-btn>
+      <v-btn text to="/admin/videos">Videos</v-btn>
     </v-app-bar>
     <v-content>
       <nuxt />
     </v-content>
+
+    <v-snackbar
+      v-for="(snackbar, index) in snackbars.filter(s => s.showing)"
+      :key="snackbar.text + Math.random()"
+      v-model="snackbar.showing"
+      :timeout="snackbar.timeout"
+      :color="snackbar.color"
+      :style="`bottom: ${(index * 60) + 8}px`"
+    >
+      {{snackbar.text}}
+
+      <v-btn text @click="snackbar.showing = false">
+        Close
+      </v-btn>
+    </v-snackbar>
     
   </v-app>
 </template>
 
 <script>
+import { mapState } from 'vuex';
   export default {
-    middleware: 'load-videos-and-tags'
+    middleware: 'load-videos-and-tags',
+    
+    computed: {
+    ...mapState({
+      snackbars: state => state.snackbar.snackbars
+    })
+  },
   }
 </script>
 

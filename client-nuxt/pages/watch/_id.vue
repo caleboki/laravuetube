@@ -51,7 +51,11 @@ export default {
 
     computed: {
       
-      ...mapState(['tags', 'videos']),
+      ...mapState({
+        tags: state => state.tags.tags,
+        videos: state => state.videos.videos
+      }),
+      
       video() {
         return this.videos.find(v => v.id == this.$route.params.id)
       },

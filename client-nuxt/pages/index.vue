@@ -24,7 +24,10 @@ export default {
     VideoListVideo
   },
   computed: {
-    ...mapState(['tags', 'videos'])
+    ...mapState({
+      tags: state => state.tags.tags,
+      videos: state => state.videos.videos
+    }),
   }
 
 }
