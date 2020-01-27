@@ -45,9 +45,11 @@ export default {
           //Check if user is authenticated at the backend
           try {
             let response = await Api().post('/auth/me');
-            let user = response.data;
+            let user = response.data.user;
+            let userId = user.id;
+            
             commit('SET_CURRENT_USER', user);
-            dispatch('loadPlayedVideos', user.id);
+            dispatch('loadPlayedVideos', userId);
           } catch (error) {
             //if not logged in at the backend, clear token an user data in localstorage
             commit('LOGOUT_USER');  
@@ -85,11 +87,14 @@ export default {
           let response = await Api().post('/auth/login', loginInfo);
           let user = response.data.user.original;
           let token = response.data.access_token;
-  
-          dispatch('loadPlayedVideos', user.id);
+          console.log(user.user)
+          dispatch('loadPlayedVideos', user.user.id);
+          
           
           commit('SET_TOKEN', token);
           commit('SET_CURRENT_USER', user);
+          dispatch('getAuthenticatedUser');
+          
           return user;
         } catch(error) {
             return {error: "Email/password combination was incorrect. Please try again."}

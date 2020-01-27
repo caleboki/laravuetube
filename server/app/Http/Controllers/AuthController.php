@@ -40,7 +40,10 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        // return response()->json(auth()->user()); //Not working with Nuxt but working with view
+        return response()->json([
+            'user' => auth()->user() //Working with Nuxt and not Vue
+            ]);
     }
 
     /**
