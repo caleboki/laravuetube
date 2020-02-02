@@ -1,15 +1,15 @@
 <template>
   <v-app>
     <v-app-bar app color="green">
-      <!-- <v-toolbar-title class="headline text-uppercase"></v-toolbar-title> -->
       <v-btn text to="/">VueTube</v-btn>
-      <v-btn text to="/admin/videos">Videos</v-btn>
+      <v-btn text to="/admin/videos" v-if="$auth.user && $auth.user.admin">
+        Admin
+      </v-btn>
 
        <v-spacer />
 
       <div v-if="$auth.loggedIn">
-        {{ $auth.user.email }}
-        <!-- <v-btn text>Logout</v-btn> -->
+        {{ $auth.user.name }}
         <v-btn text @click="$auth.logout()">Logout</v-btn>
       </div>
       <div v-else>
@@ -45,9 +45,9 @@ import { mapState } from 'vuex';
   export default {
     middleware: 'load-videos-and-tags',
 
-    created() {
-      console.log(this.$auth)
-    },
+    // created() {
+    //   console.log(this.$auth)
+    // },
     
     computed: {
     ...mapState({
