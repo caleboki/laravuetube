@@ -50,7 +50,7 @@ return [
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'laravuetube'),
             'username' => env('DB_USERNAME', 'laravuetube_root'),
-            'password' => env('DB_PASSWORD', 'GXYC7@YLQuS847U'),
+            'password' => env('DB_PASSWORD', '629a4876'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
