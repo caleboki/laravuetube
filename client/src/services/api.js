@@ -6,7 +6,7 @@ export default () => {
   //let currentUser = JSON.parse(localStorage.getItem('currentUser'))
   let token = JSON.parse(localStorage.getItem('token'))
   return axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: process.env.BASE_URL || 'http://localhost:8000/api',
     withCredentials: false,
     headers: {
       Accept: "application/json",
