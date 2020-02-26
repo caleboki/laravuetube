@@ -4,7 +4,7 @@
           class="ma-2"
           :to="`/watch/${video.id}`"
           >
-    <v-img :src="video.thumbnail"></v-img>
+    <v-img :src="video.thumbnail || ''"></v-img>
     <v-card-title>{{ video.name }}</v-card-title>
     <v-card-text>
       <!-- <div class="green--text" v-if="isPlayed(video.id)">
