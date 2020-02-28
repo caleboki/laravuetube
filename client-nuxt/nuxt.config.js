@@ -49,7 +49,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: process.env.BASE_URL + '/api' || 'http://localhost:8000/api'
+    baseURL: 'https://laravuetube-server.herokuapp.com/api' || 'http://localhost:8000/api'
   },
   /*
   ** Build configuration
